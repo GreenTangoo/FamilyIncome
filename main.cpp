@@ -25,11 +25,11 @@ ThreadWrapper::~ThreadWrapper()
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
 
     DatabaseWrapper database;
+    MainWindow w(database);
 
-    std::thread databaseThread(&DatabaseWrapper::startExecution, &database);
+    /*std::thread databaseThread(&DatabaseWrapper::startExecution, &database);
     ThreadWrapper thWrapper(databaseThread);
 
     std::string sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     for(size_t i(0); i < result.results.size(); i++)
     {
         std::cout << result.results[i].first << " - " << result.results[i].second << std::endl;
-    }
+    }*/
 
     w.show();
 
