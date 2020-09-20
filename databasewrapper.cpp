@@ -228,7 +228,7 @@ std::string TableCreator::getStuffTableCreateCommand()
 std::string TableCreator::getIncomeTableCreateCommand()
 {
     std::string sqlCommand = "CREATE TABLE source_income(id INTEGER PRIMARY KEY NOT NULL, " \
-                             "source TEXT, people_id INTEGER)";
+                             "money INTEGER, people_id INTEGER)";
     return sqlCommand;
 }
 
@@ -242,7 +242,7 @@ std::string TableCreator::getConsumptionTableCreateCommand()
 std::string TableCreator::getJournalTableCreateCommand()
 {
     std::string sqlCommand = "CREATE TABLE journal(id INTEGER PRIMARY KEY NOT NULL, " \
-                             "type_table CHAR(15), money INTEGER, people_id INTEGER, " \
-                             "record_time DATETIME, comment TEXT)";
+                             "type_table CHAR(15), money INTEGER, people_id INTEGER, stuff_id INTEGER, " \
+                             "record_time DATE, comment TEXT)";
     return sqlCommand;
 }

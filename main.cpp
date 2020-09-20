@@ -22,6 +22,45 @@ ThreadWrapper::~ThreadWrapper()
     }
 }
 
+void fill_tables(DatabaseWrapper &database)
+{
+    std::string sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
+                             "VALUES('Chewbakka', 225, 'M', 'images/chewbakka.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
+                 "VALUES('Han Solo', 49, 'M', 'images/han_solo.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
+                 "VALUES('Ben Kenobi', 57, 'M', 'images/ben_kenobi.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
+                 "VALUES('Luke Skywalker', 39, 'M', 'images/luke_skywalker.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
+                 "VALUES('Leia Organa', 39, 'F', 'images/leia_organa.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO stuff(name_stuff, id_category, icon) "\
+                 "VALUES('Lightsaber', 1, 'images/lightsaber.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO stuff(name_stuff, id_category, icon) "\
+                     "VALUES('Crossbow', 2, 'images/crossbow.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO stuff_category(category_name, icon) "\
+                 "VALUES('Melee weapon', 'images/melee.jpg')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO stuff_category(category_name, icon) "\
+                 "VALUES('Range weapon', 'images/range.jpg')";
+    database.pushCommand(sqlCommand);
+}
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -31,15 +70,6 @@ int main(int argc, char *argv[])
 
     std::thread databaseThread(&DatabaseWrapper::startExecution, &database, 500);
     ThreadWrapper thWrapper(databaseThread);
-
-    std::string sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
-                             "VALUES('Alex', 22, 'M', '/home/alex/avata.jpg')";
-
-    database.pushCommand(sqlCommand);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    CallbackResult result = database.customSelect(PEOPLE_TABLE, "name", "Alex");
 
     w.show();
 

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+extern void fill_tables(DatabaseWrapper &database);
 
 MainWindow::MainWindow(DatabaseWrapper &database, QWidget *parent) : QMainWindow(parent), _ui(new Ui::MainWindow), _database(database)
 {
@@ -47,6 +48,9 @@ void MainWindow::initializeTablesManipulationElements()
 
     _editRecordBut = std::make_shared<QPushButton>("Edit record", this);
     _editRecordBut->setGeometry(this->width() - 115, _addRecordBut->height() + 120, 90, 30);
+
+    _standartAddingBut = std::make_shared<QPushButton>("Fill tables", this);
+    _standartAddingBut->setGeometry(this->width() - 115, this->height() - 40, 90, 30);
 }
 
 void MainWindow::initializeSqlCommandElements()
@@ -83,6 +87,7 @@ void MainWindow::setSignals()
     connect(_addRecordBut.get(), SIGNAL(clicked()), this, SLOT(addRecordSlot()));
     connect(_editRecordBut.get(), SIGNAL(clicked()), this, SLOT(editRecordSlot()));
     connect(_sqlCommandInput.get(), SIGNAL(returnPressed()), this, SLOT(sqlCommandInputSlot()));
+    connect(_standartAddingBut.get(), SIGNAL(clicked()), this, SLOT(fillTablesSlot()));
 }
 
 void MainWindow::showSqlCommandElements()
@@ -117,12 +122,13 @@ void MainWindow::exportRecordSlot()
 
 void MainWindow::showTableSlot()
 {
-    QWidget *showTableWidget = new QWidget;
-    showTableWidget->setAttribute(Qt::WA_DeleteOnClose, true);
-    showTableWidget->setWindowTitle("Show table");
-    showTableWidget->show();
+    QString tablename = _tablenameInputField->text();
 
-    //TODO: write show table by tablename code.
+    CallbackResult result = _database.showTable(tablename.toStdString());
+
+    QWidget *showTableWidget = new TableDescriptor(result);
+    showTableWidget->setAttribute(Qt::WA_DeleteOnClose, true);
+    showTableWidget->show();
 }
 
 void MainWindow::addRecordSlot()
@@ -144,5 +150,10 @@ void MainWindow::sqlCommandInputSlot()
     QString command = _sqlCommandInput->text();
     _sqlCommandInput->clear();
     _commandHistory->appendPlainText(command);
-    //TODO: call DatabaseWrapper::pushCommand method.
+    _database.pushCommand(command.toStdString());
+}
+
+void MainWindow::fillTablesSlot()
+{
+    fill_tables(_database);
 }

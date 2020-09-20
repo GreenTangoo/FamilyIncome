@@ -38,6 +38,8 @@ private:
     std::shared_ptr<QRadioButton> _firstReportBut;
     std::shared_ptr<QRadioButton> _secondReportBut;
     std::shared_ptr<QPushButton> _exportReportBut;
+
+    std::shared_ptr<QPushButton> _standartAddingBut;
 private:
     void initializeAllQtElements();
     void initializeTablesManipulationElements();
@@ -53,6 +55,7 @@ private slots:
     void addRecordSlot();
     void editRecordSlot();
     void sqlCommandInputSlot();
+    void fillTablesSlot();
 protected:
     void closeEvent(QCloseEvent *event);
 public:

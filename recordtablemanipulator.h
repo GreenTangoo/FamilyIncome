@@ -2,7 +2,7 @@
 #define RECORDTABLEMANIPULATOR_H
 
 #include <memory>
-#include <map>
+#include <vector>
 
 #include <QWidget>
 #include <QPushButton>
@@ -11,6 +11,7 @@
 #include <QPlainTextEdit>
 #include <QHBoxLayout>
 #include <QFormLayout>
+#include <QMessageBox>
 
 #include "databasewrapper.h"
 
@@ -18,7 +19,7 @@ class RecordTableManipulator : public QWidget
 {
     Q_OBJECT
 public:
-    enum typeManipulate { addRecord, editRecord };
+    enum typeManipulate { addRecord = 0, editRecord };
 private:
     DatabaseWrapper &_database;
     typeManipulate _manipulationTableType;
@@ -30,6 +31,7 @@ private:
     std::shared_ptr<QLabel> _typeTableLabel;
     std::shared_ptr<QLabel> _moneyLabel;
     std::shared_ptr<QLabel> _peopleIdLabel;
+    std::shared_ptr<QLabel> _stuffIdLabel;
     std::shared_ptr<QLabel> _dateLabel;
     std::shared_ptr<QLabel> _commentLabel;
 
@@ -37,13 +39,14 @@ private:
     std::shared_ptr<QLineEdit> _typeTableEdit;
     std::shared_ptr<QLineEdit> _moneyEdit;
     std::shared_ptr<QLineEdit> _peopleIdEdit;
+    std::shared_ptr<QLineEdit> _stuffIdEdit;
     std::shared_ptr<QLineEdit> _dateEdit;
     std::shared_ptr<QPlainTextEdit> _commentEdit;
 
     std::shared_ptr<QPushButton> _sendRequestBut;
 private:
     void initializeElements();
-    void sendToOtherTables(std::map<std::string, std::string> tableSqlCommandMap);
+    void sendToTables(std::vector<std::string> const &sqlCommandsVec);
     void editRecordInTable();
     void addRecordIntoTable();
 private slots:

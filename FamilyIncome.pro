@@ -22,10 +22,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++11
+CONFIG += c++17
 
 SOURCES += \
         databasewrapper.cpp \
+        htmlexporter.cpp \
         main.cpp \
         mainwindow.cpp \
         recordtablemanipulator.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 
 HEADERS += \
         databasewrapper.h \
+        htmlexporter.h \
         mainwindow.h \
         recordtablemanipulator.h \
         tabledescriptor.h
@@ -40,7 +42,7 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-LIBS += -lpthread -lsqlite3
+LIBS += -lpthread -lsqlite3 -lstdc++fs
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
