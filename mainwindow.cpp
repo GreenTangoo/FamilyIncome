@@ -21,6 +21,12 @@ MainWindow::~MainWindow()
     delete _ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    _database.stopExecution();
+    event->accept();
+}
+
 void MainWindow::initializeAllQtElements()
 {
     initializeTablesManipulationElements();
@@ -30,74 +36,74 @@ void MainWindow::initializeAllQtElements()
 
 void MainWindow::initializeTablesManipulationElements()
 {
-    tablenameInputField = std::make_shared<QLineEdit>(this);
-    tablenameInputField->setGeometry(this->width() - 160, 20, 140, 20);
+    _tablenameInputField = std::make_shared<QLineEdit>(this);
+    _tablenameInputField->setGeometry(this->width() - 160, 20, 140, 20);
 
-    showTableBut = std::make_shared<QPushButton>("Show table", this);
-    showTableBut->setGeometry(this->width() - 115, tablenameInputField->height() + 30, 90, 30);
+    _showTableBut = std::make_shared<QPushButton>("Show table", this);
+    _showTableBut->setGeometry(this->width() - 115, _tablenameInputField->height() + 30, 90, 30);
 
-    addRecordBut = std::make_shared<QPushButton>("Add record", this);
-    addRecordBut->setGeometry(this->width() - 115, showTableBut->height() + 80, 90, 30);
+    _addRecordBut = std::make_shared<QPushButton>("Add record", this);
+    _addRecordBut->setGeometry(this->width() - 115, _showTableBut->height() + 80, 90, 30);
 
-    editRecordBut = std::make_shared<QPushButton>("Edit record", this);
-    editRecordBut->setGeometry(this->width() - 115, addRecordBut->height() + 120, 90, 30);
+    _editRecordBut = std::make_shared<QPushButton>("Edit record", this);
+    _editRecordBut->setGeometry(this->width() - 115, _addRecordBut->height() + 120, 90, 30);
 }
 
 void MainWindow::initializeSqlCommandElements()
 {
-    commandHistory = std::make_shared<QPlainTextEdit>(this);
-    commandHistory->setGeometry(40, 20, 550, 500);
-    commandHistory->setReadOnly(true);
+    _commandHistory = std::make_shared<QPlainTextEdit>(this);
+    _commandHistory->setGeometry(40, 20, 550, 500);
+    _commandHistory->setReadOnly(true);
 
-    sqlCommandInput = std::make_shared<QLineEdit>(this);
-    sqlCommandInput->setGeometry(40, commandHistory->height() + 30, 550, 20);
+    _sqlCommandInput = std::make_shared<QLineEdit>(this);
+    _sqlCommandInput->setGeometry(40, _commandHistory->height() + 30, 550, 20);
 }
 
 void MainWindow::initializeReportElements()
 {
-    firstReportBut = std::make_shared<QRadioButton>("First record", this);
-    firstReportBut->setChecked(true);
-    firstReportBut->setGeometry(40, commandHistory->height() + sqlCommandInput->height() + 45,
+    _firstReportBut = std::make_shared<QRadioButton>("First record", this);
+    _firstReportBut->setChecked(true);
+    _firstReportBut->setGeometry(40, _commandHistory->height() + _sqlCommandInput->height() + 45,
                                 100, 20);
 
-    secondReportBut = std::make_shared<QRadioButton>("Second record", this);
-    secondReportBut->setGeometry(firstReportBut->width() + 60, commandHistory->height() + sqlCommandInput->height() + 45,
+    _secondReportBut = std::make_shared<QRadioButton>("Second record", this);
+    _secondReportBut->setGeometry(_firstReportBut->width() + 60, _commandHistory->height() + _sqlCommandInput->height() + 45,
                                 120, 20);
 
 
-    exportReportBut = std::make_shared<QPushButton>("Export", this);
-    exportReportBut->setGeometry(300, commandHistory->height() + sqlCommandInput->height() + 40,
+    _exportReportBut = std::make_shared<QPushButton>("Export", this);
+    _exportReportBut->setGeometry(300, _commandHistory->height() + _sqlCommandInput->height() + 40,
                                  90, 30);
 }
 
 void MainWindow::setSignals()
 {
-    connect(exportReportBut.get(), SIGNAL(clicked()), this, SLOT(exportRecordSlot()));
-    connect(showTableBut.get(), SIGNAL(clicked()), this, SLOT(showTableSlot()));
-    connect(addRecordBut.get(), SIGNAL(clicked()), this, SLOT(addRecordSlot()));
-    connect(editRecordBut.get(), SIGNAL(clicked()), this, SLOT(editRecordSlot()));
-    connect(sqlCommandInput.get(), SIGNAL(returnPressed()), this, SLOT(sqlCommandInputSlot()));
+    connect(_exportReportBut.get(), SIGNAL(clicked()), this, SLOT(exportRecordSlot()));
+    connect(_showTableBut.get(), SIGNAL(clicked()), this, SLOT(showTableSlot()));
+    connect(_addRecordBut.get(), SIGNAL(clicked()), this, SLOT(addRecordSlot()));
+    connect(_editRecordBut.get(), SIGNAL(clicked()), this, SLOT(editRecordSlot()));
+    connect(_sqlCommandInput.get(), SIGNAL(returnPressed()), this, SLOT(sqlCommandInputSlot()));
 }
 
 void MainWindow::showSqlCommandElements()
 {
-    commandHistory->show();
-    sqlCommandInput->show();
+    _commandHistory->show();
+    _sqlCommandInput->show();
 }
 
 void MainWindow::showExportElements()
 {
-    firstReportBut->show();
-    secondReportBut->show();
-    exportReportBut->show();
+    _firstReportBut->show();
+    _secondReportBut->show();
+    _exportReportBut->show();
 }
 
 void MainWindow::showTablesManipulationElements()
 {
-    tablenameInputField->show();
-    showTableBut->show();
-    addRecordBut->show();
-    editRecordBut->show();
+    _tablenameInputField->show();
+    _showTableBut->show();
+    _addRecordBut->show();
+    _editRecordBut->show();
 }
 
 /*------------------------------------------------------------*/
@@ -121,28 +127,22 @@ void MainWindow::showTableSlot()
 
 void MainWindow::addRecordSlot()
 {
-    QWidget *addRecordWidget = new QWidget;
+    QWidget *addRecordWidget = new RecordTableManipulator(_database, RecordTableManipulator::addRecord);
     addRecordWidget->setAttribute(Qt::WA_DeleteOnClose, true);
-    addRecordWidget->setWindowTitle("Add new record");
     addRecordWidget->show();
-
-    //TODO: write adding a new value into record table code.
 }
 
 void MainWindow::editRecordSlot()
 {
-    QWidget *editRecordWidget = new QWidget;
+    QWidget *editRecordWidget = new RecordTableManipulator(_database, RecordTableManipulator::editRecord);
     editRecordWidget->setAttribute(Qt::WA_DeleteOnClose, true);
-    editRecordWidget->setWindowTitle("Edit record");
     editRecordWidget->show();
-
-    //TODO: write editing an exists record code.
 }
 
 void MainWindow::sqlCommandInputSlot()
 {
-    QString command = sqlCommandInput->text();
-    sqlCommandInput->clear();
-    commandHistory->appendPlainText(command);
+    QString command = _sqlCommandInput->text();
+    _sqlCommandInput->clear();
+    _commandHistory->appendPlainText(command);
     //TODO: call DatabaseWrapper::pushCommand method.
 }

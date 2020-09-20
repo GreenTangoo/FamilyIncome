@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     DatabaseWrapper database;
     MainWindow w(database);
 
-    /*std::thread databaseThread(&DatabaseWrapper::startExecution, &database);
+    std::thread databaseThread(&DatabaseWrapper::startExecution, &database, 500);
     ThreadWrapper thWrapper(databaseThread);
 
     std::string sqlCommand = "INSERT INTO people(name, age, gender, avatar) " \
@@ -39,16 +39,9 @@ int main(int argc, char *argv[])
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    CallbackResult result = database.showTable(PEOPLE_TABLE);
-
-    for(size_t i(0); i < result.results.size(); i++)
-    {
-        std::cout << result.results[i].first << " - " << result.results[i].second << std::endl;
-    }*/
+    CallbackResult result = database.customSelect(PEOPLE_TABLE, "name", "Alex");
 
     w.show();
-
-
 
     return a.exec();
 }

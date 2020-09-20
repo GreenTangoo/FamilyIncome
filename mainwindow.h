@@ -11,6 +11,8 @@
 #include <QLineEdit>
 #include <QPlainTextEdit>
 
+#include "tabledescriptor.h"
+#include "recordtablemanipulator.h"
 #include "databasewrapper.h"
 
 namespace Ui
@@ -24,19 +26,18 @@ class MainWindow : public QMainWindow
 private:
     Ui::MainWindow *_ui;
     DatabaseWrapper &_database;
-    std::vector<QWidget*> childWidgets;
 private:
-    std::shared_ptr<QLineEdit> tablenameInputField;
-    std::shared_ptr<QPushButton> showTableBut;
-    std::shared_ptr<QPushButton> addRecordBut;
-    std::shared_ptr<QPushButton> editRecordBut;
+    std::shared_ptr<QLineEdit> _tablenameInputField;
+    std::shared_ptr<QPushButton> _showTableBut;
+    std::shared_ptr<QPushButton> _addRecordBut;
+    std::shared_ptr<QPushButton> _editRecordBut;
 
-    std::shared_ptr<QPlainTextEdit> commandHistory;
-    std::shared_ptr<QLineEdit> sqlCommandInput;
+    std::shared_ptr<QPlainTextEdit> _commandHistory;
+    std::shared_ptr<QLineEdit> _sqlCommandInput;
 
-    std::shared_ptr<QRadioButton> firstReportBut;
-    std::shared_ptr<QRadioButton> secondReportBut;
-    std::shared_ptr<QPushButton> exportReportBut;
+    std::shared_ptr<QRadioButton> _firstReportBut;
+    std::shared_ptr<QRadioButton> _secondReportBut;
+    std::shared_ptr<QPushButton> _exportReportBut;
 private:
     void initializeAllQtElements();
     void initializeTablesManipulationElements();
@@ -52,6 +53,8 @@ private slots:
     void addRecordSlot();
     void editRecordSlot();
     void sqlCommandInputSlot();
+protected:
+    void closeEvent(QCloseEvent *event);
 public:
     explicit MainWindow(DatabaseWrapper &database, QWidget *parent = nullptr);
     ~MainWindow();

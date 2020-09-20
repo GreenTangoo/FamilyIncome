@@ -3,14 +3,16 @@
 static int show_callback(void *data, int argc, char **argv, char **azColName)
 {
     CallbackResult *resultPtr = static_cast<CallbackResult*>(data);
+    OneRecord recordVal;
 
     for(int i = 0; i < argc; i++)
     {
         std::string colName(azColName[i]);
         std::string colValue(argv[i] ? argv[i] : "NULL");
-
-        resultPtr->results.push_back(std::pair<std::string, std::string>(colName, colValue));
+        recordVal.results.push_back(std::pair<std::string, std::string>(colName, colValue));
     }
+
+    resultPtr->records.push_back(recordVal);
 
     return 0;
 }
@@ -75,26 +77,54 @@ void DatabaseWrapper::initTables()
     }
 }
 
-void DatabaseWrapper::executeCommand()
+void DatabaseWrapper::executeCommand(int period)
 {
+    bool isReadyNewCommand = false;
     while(_isNeedProcess.load())
     {
         std::unique_lock<std::mutex> processLc(_databaseWrapperMutex);
-        _executeSyncCond.wait(processLc, [this]() -> bool { return !_listCommands.empty(); });
+        isReadyNewCommand = _executeSyncCond.wait_for(processLc, std::chrono::milliseconds(period),
+                                                      [this]() -> bool { return !_listCommands.empty(); });
 
-        std::string sqlCommand = _listCommands.front();
-        _listCommands.pop_front();
-
-        char *errMsg = nullptr;
-        int res = sqlite3_exec(_db, sqlCommand.c_str(), nullptr, nullptr, &errMsg);
-        processLc.unlock();
-
-        if(res != SQLITE_OK)
+        if(isReadyNewCommand == false)
         {
-            std::cerr << "SQL error: " << errMsg << std::endl;
-            sqlite3_free(errMsg);
+            continue;
+        }
+        else
+        {
+            std::string sqlCommand = _listCommands.front();
+            _listCommands.pop_front();
+
+            char *errMsg = nullptr;
+            int res = sqlite3_exec(_db, sqlCommand.c_str(), nullptr, nullptr, &errMsg);
+            processLc.unlock();
+
+            if(res != SQLITE_OK)
+            {
+                std::cerr << "SQL error: " << errMsg << std::endl;
+                sqlite3_free(errMsg);
+            }
         }
     }
+}
+
+CallbackResult DatabaseWrapper::selectRequest(std::string selectCommand)
+{
+    CallbackResult resutStruct;
+    char *errMsg = nullptr;
+
+    _databaseWrapperMutex.lock();
+    int res = sqlite3_exec(_db, selectCommand.c_str(), show_callback, static_cast<void*>(&resutStruct), &errMsg);
+    _databaseWrapperMutex.unlock();
+
+    if(res != SQLITE_OK)
+    {
+        std::cerr << "SQL error: " << errMsg << std::endl;
+        sqlite3_free(errMsg);
+        resutStruct.errMsg = std::string(errMsg) + std::string("\n");
+    }
+
+    return resutStruct;
 }
 
 void DatabaseWrapper::pushCommand(std::string sqlCommand)
@@ -106,22 +136,14 @@ void DatabaseWrapper::pushCommand(std::string sqlCommand)
 
 CallbackResult DatabaseWrapper::showTable(std::string tablename)
 {
-    CallbackResult resutStruct;
-    char *errMsg = nullptr;
-
     std::string sqlRequest = "SELECT * FROM " + tablename;
+    return selectRequest(sqlRequest);
+}
 
-    _databaseWrapperMutex.lock();
-    int res = sqlite3_exec(_db, sqlRequest.c_str(), show_callback, static_cast<void*>(&resutStruct), &errMsg);
-    _databaseWrapperMutex.unlock();
-
-    if(res != SQLITE_OK)
-    {
-        std::cerr << "SQL error: " << errMsg << std::endl;
-        sqlite3_free(errMsg);
-    }
-
-    return resutStruct;
+CallbackResult DatabaseWrapper::customSelect(std::string tablename, std::string key, std::string value)
+{
+    std::string sqlCommand = "SELECT * FROM " + tablename + " WHERE " + key + "='" + value + "'";
+    return selectRequest(sqlCommand);
 }
 
 void DatabaseWrapper::stopExecution()
@@ -129,9 +151,9 @@ void DatabaseWrapper::stopExecution()
     _isNeedProcess.store(false);
 }
 
-void DatabaseWrapper::startExecution()
+void DatabaseWrapper::startExecution(int period)
 {
-    executeCommand();
+    executeCommand(period);
 }
 
 /*------------------------------------------------------------------------------*/

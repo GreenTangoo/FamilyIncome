@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include <chrono>
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
@@ -23,9 +24,15 @@
 #define CONSUMPTION_TABLE "source_consumption"
 #define JOURNAL_TABLE "journal"
 
-struct CallbackResult
+struct OneRecord
 {
     std::vector<std::pair<std::string, std::string>> results;
+};
+
+struct CallbackResult
+{
+    std::vector<OneRecord> records;
+    std::string errMsg;
 };
 
 class TableCreator
@@ -51,14 +58,16 @@ private:
     std::atomic<bool> _isNeedProcess;
 private:
     void initTables();
-    void executeCommand();
+    void executeCommand(int period);
+    CallbackResult selectRequest(std::string selectCommand);
 public:
     DatabaseWrapper();
     ~DatabaseWrapper();
     void pushCommand(std::string sqlCommand);
     CallbackResult showTable(std::string tablename);
+    CallbackResult customSelect(std::string tablename, std::string key, std::string value);
     void stopExecution();
-    void startExecution();
+    void startExecution(int period);
 };
 
 #endif // DATABASEWRAPPER_H

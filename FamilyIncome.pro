@@ -27,11 +27,15 @@ CONFIG += c++11
 SOURCES += \
         databasewrapper.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        recordtablemanipulator.cpp \
+        tabledescriptor.cpp
 
 HEADERS += \
         databasewrapper.h \
-        mainwindow.h
+        mainwindow.h \
+        recordtablemanipulator.h \
+        tabledescriptor.h
 
 FORMS += \
         mainwindow.ui
