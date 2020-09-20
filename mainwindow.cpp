@@ -117,7 +117,12 @@ void MainWindow::showTablesManipulationElements()
 
 void MainWindow::exportRecordSlot()
 {
-    // TODO: create RecordCreater class
+    HtmlExporter::typeReport typeRep = _firstReportBut->isChecked() ?
+                HtmlExporter::first : HtmlExporter::second;
+
+    HtmlExporter exporter(_database);
+    exporter.exportReport(typeRep);
+    QMessageBox::information(this, "Export information", "Экспорт данных прошел успешно");
 }
 
 void MainWindow::showTableSlot()

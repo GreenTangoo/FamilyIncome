@@ -146,6 +146,13 @@ CallbackResult DatabaseWrapper::customSelect(std::string tablename, std::string 
     return selectRequest(sqlCommand);
 }
 
+CallbackResult DatabaseWrapper::singleSelect(std::string tablename, std::string columnName, std::string key, std::string value)
+{
+    std::string sqlCommand = "SELECT " + columnName + " FROM " + tablename +
+            " WHERE " + key + "='" + value + "'";
+    return selectRequest(sqlCommand);
+}
+
 void DatabaseWrapper::stopExecution()
 {
     _isNeedProcess.store(false);

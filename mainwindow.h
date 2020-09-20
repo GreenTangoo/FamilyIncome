@@ -10,10 +10,12 @@
 #include <QRadioButton>
 #include <QLineEdit>
 #include <QPlainTextEdit>
+#include <QMessageBox>
 
 #include "tabledescriptor.h"
 #include "recordtablemanipulator.h"
 #include "databasewrapper.h"
+#include "htmlexporter.h"
 
 namespace Ui
 {

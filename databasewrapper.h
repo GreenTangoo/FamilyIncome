@@ -66,6 +66,7 @@ public:
     void pushCommand(std::string sqlCommand);
     CallbackResult showTable(std::string tablename);
     CallbackResult customSelect(std::string tablename, std::string key, std::string value);
+    CallbackResult singleSelect(std::string tablename, std::string columnName, std::string key, std::string value);
     void stopExecution();
     void startExecution(int period);
 };

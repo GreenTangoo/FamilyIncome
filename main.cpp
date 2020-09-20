@@ -59,6 +59,18 @@ void fill_tables(DatabaseWrapper &database)
     sqlCommand = "INSERT INTO stuff_category(category_name, icon) "\
                  "VALUES('Range weapon', 'images/range.jpg')";
     database.pushCommand(sqlCommand);
+
+    /*sqlCommand = "INSERT INTO journal(type_table, money, people_id, stuff_id, record_time, comment) "\
+                 "VALUES('source_consumption', 3000, 1, 2, '2020-09-15', 'CrowssBOW!')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO journal(type_table, money, people_id, stuff_id, record_time, comment) "\
+                 "VALUES('source_consumption', 5000, 2, 2, '2020-09-16', 'New CrowssBOW!')";
+    database.pushCommand(sqlCommand);
+
+    sqlCommand = "INSERT INTO journal(type_table, money, people_id, stuff_id, record_time, comment) "\
+                 "VALUES('source_consumption', 25000, 4, 1, '2020-09-14', 'LigthSaber')";
+    database.pushCommand(sqlCommand);*/
 }
 
 int main(int argc, char *argv[])
